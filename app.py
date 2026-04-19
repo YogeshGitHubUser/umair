@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import json
 
 st.set_page_config(
@@ -297,5 +298,8 @@ HTML = f"""
 </div>
 """
 
-# Render everything seamlessly
-st.markdown(CSS + HTML + JS, unsafe_allow_html=True)
+# Combine all parts
+full_page = CSS + HTML + JS
+
+# Render everything cleanly inside a dedicated HTML component
+components.html(full_page, height=1000, scrolling=True)
