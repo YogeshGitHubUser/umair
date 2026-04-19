@@ -1,68 +1,78 @@
-# 📖 The Secret Kingdom of Numbers — Book Store Website
+# 📖 Book Store Website — Setup Guide
 
-A magical, children-friendly one-page book selling website built with Python + Streamlit.
+Built with **Python + Streamlit** · No backend needed · Free to deploy
 
 ---
 
-## 🚀 Run Locally
+## 🚀 Run Locally (30 seconds)
 
 ```bash
 pip install streamlit
 streamlit run app.py
 ```
-
-Then open `http://localhost:8501` in your browser.
-
----
-
-## 🌐 Deploy on Streamlit Cloud (Free)
-
-1. Push this folder to a **GitHub repository**
-2. Go to [share.streamlit.io](https://share.streamlit.io)
-3. Click **New App** → connect your GitHub repo
-4. Set main file: `app.py`
-5. Click **Deploy** — your URL will be `your-app-name.streamlit.app` ✅
+Opens at → `http://localhost:8501`
 
 ---
 
-## ✏️ Customise the Book Details
+## 🌐 Deploy Free on Streamlit Cloud
 
-Open `app.py` and edit the `BOOK` dictionary at the top:
+1. Create a free account at [share.streamlit.io](https://share.streamlit.io)
+2. Push this folder to a GitHub repo
+3. New App → point to `app.py` → Deploy
+4. Your URL: `yourname-bookname.streamlit.app` ✅
 
-| Field | What to change |
-|-------|---------------|
-| `title` | Your book's actual title |
-| `author` | The student's name |
-| `description` | Your book's description |
-| `physical_price` | Price in ₹ for physical copy |
-| `digital_price` | Price in ₹ for PDF |
-| `gpay_upi` | Your real UPI ID (e.g. name@oksbi) |
-| `whatsapp` | WhatsApp number for order confirmation |
-| `preview_pages` | Up to 3 short excerpts from the book |
+---
+
+## ✏️ Customise — Edit the `BOOK` dictionary in `app.py`
+
+| Key | What to put |
+|-----|-------------|
+| `title` | Real book title |
+| `author` | Student's name |
+| `description` | Back-cover style description |
+| `physical_price` | Price in ₹ |
+| `digital_price` | Price in ₹ |
+| `upi_id` | Your UPI ID (e.g. name@oksbi) |
+| `whatsapp` | Country code + number (e.g. 919876543210) |
+| `seller_email` | Your email where orders are notified |
+| `preview` | 3 short excerpt objects from the book |
+| `author_bio` | A short paragraph about the author |
+
+**For the QR code:** Replace the SVG placeholder in the `<div class="qr-img">` section with an actual screenshot of your UPI QR (from GPay / PhonePe app). Save it as `qr.png` and change the SVG tag to `<img src="qr.png" width="144" height="144">`.
+
+---
+
+## 💸 How Payments Work (Zero Cost)
+
+```
+Customer fills form → sees QR → pays via GPay/Paytm/PhonePe
+      → sends WhatsApp screenshot → you confirm
+      → for digital: email the PDF manually
+      → for physical: ship the book
+```
+
+**Why this works best for a student seller:**
+- ₹0 platform fees
+- No business registration needed
+- Works on any device
+- You stay in control
 
 ---
 
 ## ✨ Features
 
-- 🌌 **Animated star field** background
-- 📖 **3D floating book** with glowing effects
-- 🔮 **Book Oracle** — AI chat powered by Claude, answers questions about the book & math
-- 🧩 **Math Riddles** — 5 fun riddles from the Number Kingdom
-- 💸 **QR Payment popup** — GPay, PhonePe, Paytm, Cash
-- 📲 **WhatsApp confirmation** button
-- ✨ **Magic cursor** with gold trail
-- 📊 **Reading progress bar**
-- 🎉 **Particle burst** on card click
-- 📱 Fully **mobile responsive**
+- Clean, professional design — no broken 3D
+- Separate physical & digital order flows
+- 3-step order modal: Details → Pay → Confirm
+- Address collection for physical orders only
+- Email collection for digital PDF delivery
+- Auto-filled WhatsApp message with order details
+- 5 Math Riddles from the book (interactive game)
+- Book cover mockup with hover effect
+- Fully mobile responsive
+- Chapter preview section
+- Author profile section
 
 ---
 
-## 🔑 Notes on the Oracle (AI Feature)
-
-The Book Oracle uses the Anthropic Claude API directly from the browser.
-For production use, you should proxy this through a backend (Flask/FastAPI) to protect your API key.
-For a school project / small scale use, it works as-is.
-
----
-
-Made with ❤️ for a young author's first book!
+Made with ❤️ for a young author's first book — {BOOK_PLACEHOLDER}

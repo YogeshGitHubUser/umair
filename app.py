@@ -1,1228 +1,1088 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
-# ─── PAGE CONFIG ───────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="The Enchanted Book",
+    page_title="The Secret Kingdom of Numbers",
     page_icon="📖",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
 
-# ─── BOOK DATA — edit these to match the real book ─────────────────────────────
+# ── HIDE STREAMLIT CHROME ──────────────────────────────────────────────────────
+st.markdown("""
+<style>
+#MainMenu, header, footer, .stDeployButton { display: none !important; }
+.block-container { padding: 0 !important; max-width: 100% !important; }
+iframe { display: block; border: none; }
+</style>
+""", unsafe_allow_html=True)
+
+# ── BOOK CONFIG — edit everything here ────────────────────────────────────────
 BOOK = {
-    "title": "The Secret Kingdom of Numbers",
-    "subtitle": "A Mathematical Adventure Beyond Imagination",
-    "author": "Aryan Sharma",
-    "age": 13,
-    "grade": "Class 8",
-    "city": "Pune, India",
-    "pages": 124,
-    "genre": "Math · Adventure · Fantasy",
-    "tagline": "What if every number had a superpower?",
+    "title":          "The Secret Kingdom of Numbers",
+    "subtitle":       "A Mathematical Adventure Beyond Imagination",
+    "author":         "Aryan Sharma",
+    "age":            13,
+    "grade":          "Class 8",
+    "city":           "Pune, India",
+    "pages":          124,
+    "genre":          "Math · Adventure · Fantasy",
+    "tagline":        "What if every number had a superpower?",
     "description": (
-        "Dive into a magical world where Prime Numbers guard ancient castles, "
+        "Dive into a world where Prime Numbers guard ancient castles, "
         "Fractions build rainbow bridges, and the fearless hero Zero discovers "
-        "that nothing can be the most powerful thing of all. Packed with real math "
-        "tricks hidden inside an epic quest — this book makes you fall in love with "
-        "numbers forever."
+        "that nothing can be the most powerful thing of all. Packed with real "
+        "math concepts hidden inside an epic quest — this book makes you fall "
+        "in love with numbers forever."
     ),
-    "preview_pages": [
+    "author_bio": (
+        "Aryan is a Class 8 student with a love for mathematics and an even "
+        "bigger imagination. When his teacher told him numbers have personalities, "
+        "he went home and wrote an entire fantasy world about them. "
+        "This book proves that the best stories can come from the most curious minds — "
+        "no matter how young."
+    ),
+    "preview": [
         {
-            "title": "Chapter 1 · The Gate of Infinity",
+            "chapter": "Chapter 1",
+            "title":   "The Gate of Infinity",
+            "emoji":   "🚪",
             "text": (
-                "The old wooden door was carved with a thousand spirals. "
-                "Each spiral was a number, and each number whispered a secret. "
-                "Aryan touched the door and felt a tingle — like electricity, "
-                "but made of mathematics. 'To enter,' said the Guardian, "
-                "'you must answer: what number is both odd and even?' "
-                "Aryan smiled. He already knew the answer was hiding in plain sight..."
+                "The old door was carved with a thousand spirals — each one a number, "
+                "each number a secret. 'To enter,' said the Guardian, 'you must answer: "
+                "what number is both everything and nothing?' Aryan smiled slowly. "
+                "He already knew."
             ),
-            "emoji": "🚪",
         },
         {
-            "title": "Chapter 4 · The Fraction Forest",
+            "chapter": "Chapter 4",
+            "title":   "The Fraction Forest",
+            "emoji":   "🌳",
             "text": (
-                "Half the trees were tall, a quarter were golden, and one-eighth "
-                "glowed violet at night. The forest itself was a living fraction — "
-                "always adding up to one whole, no matter how you split it. "
-                "'That's the beauty,' whispered the ancient Fraction Fairy. "
-                "'We are pieces, but together we are complete. Just like you and your friends.'"
+                "Half the trees were tall, a quarter were golden, one-eighth glowed "
+                "violet at night. The forest itself was a living fraction — always "
+                "adding to one whole, no matter how you divided it. "
+                "'We are pieces,' whispered the Fraction Fairy. 'But together, we are complete.'"
             ),
-            "emoji": "🌳",
         },
         {
-            "title": "Chapter 9 · Zero's Secret Power",
+            "chapter": "Chapter 9",
+            "title":   "Zero's Secret",
+            "emoji":   "⭕",
             "text": (
                 "Everyone laughed at Zero. 'You are nothing!' they said. "
-                "But Zero just smiled. With one quiet step, Zero stood beside One — "
-                "and suddenly One became Ten. Then Hundred. Then Thousand. "
-                "'Nothing,' said Zero, 'can become everything. That is my superpower.'"
+                "But Zero just smiled and stepped beside One — "
+                "and One became Ten. Then Hundred. Then Thousand. "
+                "'Nothing,' said Zero quietly, 'can become everything.'"
             ),
-            "emoji": "⭕",
         },
     ],
     "physical_price": 299,
-    "digital_price": 99,
-    "currency": "₹",
-    "gpay_upi": "aryan@oksbi",   # ← replace with real UPI ID
-    "seller_phone": "9876543210", # ← replace with real number
-    "whatsapp": "9876543210",    # ← replace
-    "cover_gradient": "linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 70%, #533483 100%)",
-    "star_count": 48,
+    "digital_price":  99,
+    "upi_id":         "aryan@oksbi",          # ← replace with real UPI ID
+    "whatsapp":       "919876543210",          # ← replace (country code + number)
+    "seller_email":   "aryan@example.com",     # ← replace
+    "seller_name":    "Aryan Sharma",
 }
 
-# ─── INJECT FULL-PAGE MAGIC HTML ───────────────────────────────────────────────
-html = f"""
-<!DOCTYPE html>
+# ── RIDDLES DATA ───────────────────────────────────────────────────────────────
+RIDDLES = [
+    {
+        "q": "I am neither positive nor negative. What number am I?",
+        "opts": ["One", "Zero", "Infinity", "Half"],
+        "correct": 1,
+        "fact": "Zero (0) is the only number that is neither positive nor negative — and it has the power to make any number ten times bigger!"
+    },
+    {
+        "q": "A fraction whose numerator equals its denominator always equals…?",
+        "opts": ["Zero", "Two", "One", "Itself"],
+        "correct": 2,
+        "fact": "Any number ÷ itself = 1. That's why 4/4, 99/99, and 1000/1000 are all exactly equal to 1!"
+    },
+    {
+        "q": "Which of these is NOT a prime number?",
+        "opts": ["7", "11", "15", "13"],
+        "correct": 2,
+        "fact": "15 = 3 × 5, so it has factors other than 1 and itself. That disqualifies it from the Prime Guard!"
+    },
+    {
+        "q": "The angles of ANY triangle always add up to…?",
+        "opts": ["90°", "360°", "270°", "180°"],
+        "correct": 3,
+        "fact": "Every triangle — big, small, weird — always has angles that sum to exactly 180°. It's one of geometry's golden laws."
+    },
+    {
+        "q": "Which number, when multiplied by anything, leaves it unchanged?",
+        "opts": ["0", "2", "1", "10"],
+        "correct": 2,
+        "fact": "1 is the Multiplicative Identity. n × 1 = n, always. It's the quiet guardian of every equation."
+    },
+]
+
+# ── BUILD THE PAGE ─────────────────────────────────────────────────────────────
+riddles_json = str(RIDDLES).replace("'", '"').replace("True","true").replace("False","false")
+
+html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{BOOK['title']}</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Nunito:wght@400;600;700;800&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
-/* ───────────── ROOT & RESET ───────────── */
-:root{{
-  --ink: #0d0d1a;
-  --deep: #090915;
-  --violet: #533483;
-  --violet2: #7b52ab;
-  --cyan: #00d4ff;
-  --gold: #ffd700;
-  --gold2: #ffb300;
-  --rose: #ff6b9d;
-  --cream: #fef9ec;
-  --cream2: #fdf3d4;
-  --text: #e8e0ff;
-  --muted: rgba(232,224,255,0.55);
-  --card-bg: rgba(255,255,255,0.04);
-  --card-border: rgba(255,255,255,0.10);
-  --glow: 0 0 40px rgba(83,52,131,0.6);
-}}
+/* ── RESET & ROOT ─────────────────────────────── */
 *{{margin:0;padding:0;box-sizing:border-box;}}
-html{{scroll-behavior:smooth;}}
+html{{scroll-behavior:smooth;font-size:16px;}}
+
+:root{{
+  --bg:       #FAFAF7;
+  --ink:      #1A1A1A;
+  --ink2:     #4A4A4A;
+  --ink3:     #7A7A7A;
+  --border:   #E4E0D8;
+  --cream:    #F5F0E8;
+  --accent:   #C8602A;       /* warm terracotta */
+  --accent2:  #E8835A;
+  --violet:   #3D2B6E;
+  --violet2:  #5B4290;
+  --gold:     #C8A84B;
+  --gold2:    #F0D080;
+  --green:    #2A6B4A;
+  --white:    #FFFFFF;
+  --shadow:   0 2px 12px rgba(0,0,0,0.08);
+  --shadow-md:0 8px 32px rgba(0,0,0,0.12);
+  --shadow-lg:0 16px 48px rgba(0,0,0,0.16);
+  --r:12px;
+  --r-lg:20px;
+}}
+
 body{{
-  font-family:'Nunito',sans-serif;
-  background:var(--deep);
-  color:var(--text);
-  overflow-x:hidden;
-  cursor:none;
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
 }}
 
-/* ───────────── MAGIC CURSOR ───────────── */
-#cursor{{
-  width:14px;height:14px;
-  border-radius:50%;
-  background:var(--gold);
-  position:fixed;pointer-events:none;z-index:99999;
-  mix-blend-mode:screen;
-  transition:transform 0.15s ease,opacity 0.3s;
-  box-shadow:0 0 16px var(--gold),0 0 32px rgba(255,215,0,0.4);
-}}
-#cursor-trail{{
-  width:32px;height:32px;
-  border-radius:50%;
-  border:2px solid var(--violet2);
-  position:fixed;pointer-events:none;z-index:99998;
-  transition:all 0.12s ease;
-  box-shadow:0 0 8px var(--violet);
-}}
+/* ── TYPOGRAPHY ───────────────────────────────── */
+.serif      {{ font-family:'Playfair Display',serif; }}
+.serif-body {{ font-family:'DM Serif Display',serif; }}
+h1,h2,h3   {{ font-family:'Playfair Display',serif; line-height:1.15; }}
 
-/* ───────────── STAR CANVAS ───────────── */
-#starfield{{
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  pointer-events:none;z-index:0;
-}}
+/* ── LAYOUT ───────────────────────────────────── */
+.container {{ max-width:1000px;margin:0 auto;padding:0 24px; }}
+.section    {{ padding:72px 0; }}
+.section-sm {{ padding:48px 0; }}
+hr.divider  {{ border:none;border-top:1px solid var(--border);margin:0; }}
 
-/* ───────────── HERO ───────────── */
-.hero{{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:60px 24px;
-  position:relative;
-  z-index:2;
-  overflow:hidden;
-}}
-.hero-glow{{
-  position:absolute;
-  width:700px;height:700px;
-  border-radius:50%;
-  background:radial-gradient(circle,rgba(83,52,131,0.35) 0%,transparent 70%);
-  top:50%;left:50%;
-  transform:translate(-50%,-50%);
-  pointer-events:none;
-  animation:pulse 4s ease-in-out infinite;
-}}
-@keyframes pulse{{
-  0%,100%{{transform:translate(-50%,-50%) scale(1);opacity:0.6;}}
-  50%{{transform:translate(-50%,-50%) scale(1.15);opacity:1;}}
-}}
-.hero-inner{{
-  display:flex;
-  align-items:center;
-  gap:80px;
-  max-width:1100px;
-  width:100%;
-}}
-
-/* FLOATING BOOK */
-.book-wrap{{
-  flex-shrink:0;
-  position:relative;
-  animation:float 6s ease-in-out infinite;
-}}
-@keyframes float{{
-  0%,100%{{transform:translateY(0) rotateY(-8deg) rotateX(5deg);}}
-  50%{{transform:translateY(-22px) rotateY(-8deg) rotateX(5deg);}}
-}}
-.book{{
-  width:220px;height:300px;
-  position:relative;
-  transform-style:preserve-3d;
-  perspective:1000px;
-  filter:drop-shadow(0 30px 60px rgba(83,52,131,0.8));
-}}
-.book-cover{{
-  width:220px;height:300px;
-  border-radius:4px 16px 16px 4px;
-  background:{BOOK['cover_gradient']};
-  position:relative;
-  overflow:hidden;
-  border:1px solid rgba(255,215,0,0.3);
-}}
-.book-cover::before{{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(255,255,255,0.12) 0%,transparent 50%);
-}}
-.book-cover::after{{
-  content:'';position:absolute;
-  left:0;top:0;bottom:0;width:18px;
-  background:linear-gradient(to right,rgba(0,0,0,0.4),rgba(83,52,131,0.3));
-  border-radius:4px 0 0 4px;
-}}
-.book-spine-text{{
-  position:absolute;left:0;top:0;bottom:0;width:18px;
-  display:flex;align-items:center;justify-content:center;
-  writing-mode:vertical-rl;
-  font-size:9px;font-weight:800;
-  color:rgba(255,255,255,0.4);
-  letter-spacing:0.2em;
-  text-transform:uppercase;
-  z-index:2;
-}}
-.book-stars{{
-  position:absolute;top:16px;right:16px;
-  font-size:18px;
-  animation:twinkle 2s ease-in-out infinite;
-}}
-@keyframes twinkle{{
-  0%,100%{{opacity:1;transform:scale(1);}}
-  50%{{opacity:0.6;transform:scale(0.9);}}
-}}
-.book-title-text{{
-  position:absolute;
-  bottom:0;left:0;right:0;
-  padding:24px 16px 20px;
-  background:linear-gradient(to top,rgba(0,0,0,0.9),transparent);
-  font-family:'Cinzel Decorative',serif;
-  font-size:11px;
-  font-weight:700;
-  color:var(--gold);
-  line-height:1.4;
-  text-align:center;
-  letter-spacing:0.05em;
-}}
-.book-author-text{{
-  font-family:'Nunito',sans-serif;
-  font-size:9px;
-  font-weight:600;
-  color:rgba(255,255,255,0.5);
-  margin-top:4px;
-  letter-spacing:0.1em;
-}}
-
-/* Orbiting badge */
-.orbit-badge{{
-  position:absolute;
-  top:-20px;right:-20px;
-  width:64px;height:64px;
-  background:var(--gold);
-  border-radius:50%;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  font-size:9px;font-weight:900;
-  color:#000;
-  line-height:1.2;
-  text-align:center;
-  animation:spin-badge 8s linear infinite;
-  box-shadow:0 0 24px rgba(255,215,0,0.6);
-  text-transform:uppercase;
-  letter-spacing:0.05em;
-  z-index:5;
-}}
-@keyframes spin-badge{{
-  0%{{transform:rotate(0deg);}}
-  100%{{transform:rotate(360deg);}}
-}}
-.orbit-badge span{{
+/* ── LABELS ───────────────────────────────────── */
+.label{{
   display:inline-block;
-  animation:spin-badge-reverse 8s linear infinite;
-}}
-@keyframes spin-badge-reverse{{
-  0%{{transform:rotate(0deg);}}
-  100%{{transform:rotate(-360deg);}}
-}}
-
-/* Book shadow */
-.book-shadow{{
-  width:180px;height:20px;
-  background:radial-gradient(ellipse,rgba(83,52,131,0.6) 0%,transparent 70%);
-  margin:16px auto 0;
-  animation:shadow-pulse 6s ease-in-out infinite;
-}}
-@keyframes shadow-pulse{{
-  0%,100%{{transform:scaleX(1);opacity:0.6;}}
-  50%{{transform:scaleX(0.85);opacity:0.3;}}
-}}
-
-/* HERO RIGHT */
-.hero-right{{flex:1;}}
-.hero-badge{{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:6px 16px;
-  border:1px solid rgba(255,215,0,0.3);
-  border-radius:40px;
-  font-size:11px;font-weight:700;
-  color:var(--gold);
-  letter-spacing:0.15em;
-  text-transform:uppercase;
-  margin-bottom:24px;
-  background:rgba(255,215,0,0.07);
-}}
-.hero-badge .dot{{
-  width:6px;height:6px;border-radius:50%;
-  background:var(--gold);
-  animation:blink 1.5s ease-in-out infinite;
-}}
-@keyframes blink{{
-  0%,100%{{opacity:1;}}50%{{opacity:0.3;}}
-}}
-.hero-h1{{
-  font-family:'Cinzel Decorative',serif;
-  font-size:clamp(28px,4vw,52px);
-  font-weight:900;
-  line-height:1.15;
-  color:#fff;
-  letter-spacing:-0.01em;
-  margin-bottom:8px;
-}}
-.hero-h1 .accent{{color:var(--gold);}}
-.hero-tagline{{
-  font-size:18px;
-  font-weight:600;
-  color:var(--rose);
-  margin-bottom:20px;
-  font-style:italic;
-}}
-.hero-desc{{
-  font-size:15px;
-  color:var(--muted);
-  line-height:1.85;
-  max-width:480px;
-  margin-bottom:36px;
-  font-family:'Crimson Pro',serif;
-  font-size:17px;
-}}
-.hero-meta{{
-  display:flex;gap:24px;margin-bottom:36px;flex-wrap:wrap;
-}}
-.meta-pill{{
-  display:flex;align-items:center;gap:6px;
-  font-size:13px;font-weight:700;
-  color:rgba(232,224,255,0.7);
-}}
-.meta-pill span{{font-size:16px;}}
-
-/* BUY BUTTONS */
-.buy-group{{
-  display:flex;gap:14px;flex-wrap:wrap;
-}}
-.btn-buy{{
-  display:flex;align-items:center;gap:10px;
-  padding:16px 28px;
-  border-radius:14px;
-  font-size:15px;font-weight:800;
-  cursor:pointer;
-  border:none;
-  text-decoration:none;
-  transition:all 0.25s ease;
-  position:relative;
-  overflow:hidden;
-  letter-spacing:0.02em;
-}}
-.btn-buy::before{{
-  content:'';
-  position:absolute;inset:0;
-  background:rgba(255,255,255,0.12);
-  opacity:0;
-  transition:opacity 0.2s;
-}}
-.btn-buy:hover::before{{opacity:1;}}
-.btn-buy:hover{{transform:translateY(-3px);}}
-.btn-physical{{
-  background:linear-gradient(135deg,var(--gold) 0%,var(--gold2) 100%);
-  color:#000;
-  box-shadow:0 8px 30px rgba(255,215,0,0.35);
-}}
-.btn-digital{{
-  background:linear-gradient(135deg,var(--violet) 0%,var(--violet2) 100%);
-  color:#fff;
-  box-shadow:0 8px 30px rgba(83,52,131,0.4);
-}}
-.btn-physical:hover{{box-shadow:0 12px 40px rgba(255,215,0,0.55);}}
-.btn-digital:hover{{box-shadow:0 12px 40px rgba(83,52,131,0.6);}}
-.price-tag{{font-size:20px;font-weight:900;}}
-.price-sub{{font-size:11px;font-weight:600;opacity:0.75;display:block;line-height:1;}}
-
-/* ───────────── SECTION WRAPPER ───────────── */
-.section{{
-  max-width:1100px;
-  margin:0 auto;
-  padding:80px 24px;
-  position:relative;
-  z-index:2;
-}}
-.section-label{{
-  font-size:11px;font-weight:800;
-  letter-spacing:0.25em;text-transform:uppercase;
-  color:var(--cyan);
+  font-size:11px;font-weight:600;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:var(--accent);
   margin-bottom:12px;
 }}
-.section-title{{
-  font-family:'Cinzel Decorative',serif;
-  font-size:clamp(26px,3.5vw,40px);
-  font-weight:700;
-  color:#fff;
-  margin-bottom:40px;
-  line-height:1.2;
-}}
 
-/* ───────────── PREVIEW ───────────── */
-.preview-bg{{
-  background:linear-gradient(180deg,var(--deep) 0%,rgba(83,52,131,0.12) 50%,var(--deep) 100%);
-  position:relative;
-}}
-.preview-cards{{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-  gap:20px;
-}}
-.prev-card{{
-  background:var(--card-bg);
-  border:1px solid var(--card-border);
-  border-radius:20px;
-  padding:28px 24px;
+/* ─────────────────────────────────────────────────
+   HERO
+───────────────────────────────────────────────── */
+.hero{{
+  background:var(--violet);
+  color:#fff;
+  padding:64px 0 56px;
   position:relative;
   overflow:hidden;
-  cursor:pointer;
-  transition:all 0.3s ease;
 }}
-.prev-card::before{{
+/* subtle texture overlay */
+.hero::before{{
   content:'';
   position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(83,52,131,0.15),transparent);
-  opacity:0;
-  transition:opacity 0.3s;
-}}
-.prev-card:hover{{
-  border-color:rgba(255,215,0,0.3);
-  transform:translateY(-6px);
-  box-shadow:0 20px 60px rgba(83,52,131,0.4);
-}}
-.prev-card:hover::before{{opacity:1;}}
-.prev-emoji{{font-size:36px;margin-bottom:12px;display:block;}}
-.prev-chapter{{
-  font-size:10px;font-weight:800;
-  letter-spacing:0.2em;text-transform:uppercase;
-  color:var(--cyan);margin-bottom:6px;
-}}
-.prev-text{{
-  font-family:'Crimson Pro',serif;
-  font-size:15px;line-height:1.75;
-  color:var(--muted);
-  font-style:italic;
-  position:relative;
-}}
-.prev-text::before{{
-  content:'"';
-  font-size:48px;
-  color:rgba(255,215,0,0.15);
-  font-family:'Cinzel Decorative',serif;
-  position:absolute;
-  top:-10px;left:-8px;
-  line-height:1;
-}}
-.card-glow{{
-  position:absolute;
-  bottom:-30px;right:-30px;
-  width:100px;height:100px;
-  border-radius:50%;
-  background:radial-gradient(circle,rgba(83,52,131,0.4),transparent);
+  background:
+    radial-gradient(ellipse 60% 80% at 80% 50%, rgba(200,96,42,.18) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 20% 20%, rgba(255,255,255,.04) 0%, transparent 60%);
   pointer-events:none;
 }}
-
-/* ───────────── AUTHOR ───────────── */
-.author-bg{{background:rgba(255,255,255,0.02);border-top:1px solid var(--card-border);border-bottom:1px solid var(--card-border);}}
-.author-inner{{
-  display:flex;
+.hero-inner{{
+  position:relative;z-index:1;
+  display:grid;
+  grid-template-columns:1fr 340px;
+  gap:56px;
   align-items:center;
-  gap:60px;
-  max-width:900px;
-  margin:0 auto;
-  padding:80px 24px;
 }}
-.author-avatar{{
-  flex-shrink:0;
-  width:160px;height:160px;
-  border-radius:50%;
-  background:linear-gradient(135deg,var(--violet) 0%,var(--violet2) 100%);
-  display:flex;align-items:center;justify-content:center;
-  font-size:72px;
-  position:relative;
-  box-shadow:0 0 0 6px rgba(83,52,131,0.3),0 0 60px rgba(83,52,131,0.4);
-  animation:author-pulse 4s ease-in-out infinite;
+/* left */
+.hero-eyebrow{{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:40px;padding:5px 14px;
+  font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,.6);
+  margin-bottom:22px;
 }}
-@keyframes author-pulse{{
-  0%,100%{{box-shadow:0 0 0 6px rgba(83,52,131,0.3),0 0 60px rgba(83,52,131,0.4);}}
-  50%{{box-shadow:0 0 0 12px rgba(83,52,131,0.15),0 0 80px rgba(83,52,131,0.6);}}
+.hero-eyebrow .dot{{
+  width:6px;height:6px;border-radius:50%;background:var(--gold2);
+  animation:blink 1.6s ease-in-out infinite;
 }}
-.author-details{{flex:1;}}
-.author-name{{
-  font-family:'Cinzel Decorative',serif;
-  font-size:28px;font-weight:700;
-  color:#fff;margin-bottom:4px;
+@keyframes blink{{0%,100%{{opacity:1;}}50%{{opacity:.3;}}}}
+.hero h1{{
+  font-size:clamp(32px,4.5vw,52px);
+  font-weight:900;color:#fff;
+  margin-bottom:10px;
+  letter-spacing:-.02em;
 }}
-.author-grade{{
-  font-size:13px;font-weight:700;
-  color:var(--gold);margin-bottom:16px;
-  letter-spacing:0.08em;
-}}
-.author-bio{{
-  font-family:'Crimson Pro',serif;
-  font-size:17px;line-height:1.8;
-  color:var(--muted);
+.hero h1 em{{color:var(--gold2);font-style:normal;}}
+.hero-tagline{{
+  font-family:'DM Serif Display',serif;
+  font-size:18px;font-style:italic;
+  color:rgba(255,255,255,.65);
   margin-bottom:20px;
 }}
-.author-stats{{display:flex;gap:24px;flex-wrap:wrap;}}
-.astat{{text-align:center;}}
-.astat-num{{
-  font-family:'Cinzel Decorative',serif;
-  font-size:28px;font-weight:700;color:var(--cyan);line-height:1;
+.hero-desc{{
+  font-size:15px;color:rgba(255,255,255,.7);
+  line-height:1.75;max-width:520px;margin-bottom:32px;
 }}
-.astat-lbl{{font-size:11px;color:var(--muted);margin-top:2px;}}
+.hero-meta{{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:32px;}}
+.meta-chip{{
+  display:flex;align-items:center;gap:6px;
+  font-size:13px;color:rgba(255,255,255,.55);font-weight:500;
+}}
+.meta-chip .ic{{font-size:15px;}}
 
-/* ───────────── INTERACTIVE: BOOK ORACLE ───────────── */
-.oracle-bg{{
-  background:radial-gradient(ellipse at center,rgba(83,52,131,0.2) 0%,transparent 70%);
-  border-top:1px solid var(--card-border);
-}}
-.oracle-wrap{{
-  max-width:700px;
-  margin:0 auto;
-  text-align:center;
-}}
-.oracle-crystal{{
-  font-size:80px;
-  display:block;
-  margin:0 auto 24px;
-  animation:crystal-spin 10s linear infinite;
-  cursor:pointer;
-  filter:drop-shadow(0 0 20px rgba(83,52,131,0.8));
-  transition:transform 0.3s;
-}}
-.oracle-crystal:hover{{transform:scale(1.15) rotate(10deg);}}
-@keyframes crystal-spin{{
-  0%{{filter:drop-shadow(0 0 20px rgba(83,52,131,0.8)) hue-rotate(0deg);}}
-  100%{{filter:drop-shadow(0 0 20px rgba(0,212,255,0.8)) hue-rotate(360deg);}}
-}}
-.oracle-title{{
-  font-family:'Cinzel Decorative',serif;
-  font-size:26px;color:#fff;margin-bottom:8px;
-}}
-.oracle-sub{{
-  font-size:14px;color:var(--muted);margin-bottom:30px;
-  font-family:'Crimson Pro',serif;font-size:16px;
-}}
-.oracle-btn{{
+/* BUY BUTTONS */
+.btn-group{{display:flex;gap:12px;flex-wrap:wrap;}}
+.btn{{
   display:inline-flex;align-items:center;gap:10px;
-  padding:16px 36px;
-  background:linear-gradient(135deg,var(--violet) 0%,var(--cyan) 100%);
-  color:#fff;border:none;border-radius:50px;
-  font-size:15px;font-weight:800;
-  cursor:pointer;
-  letter-spacing:0.05em;
-  box-shadow:0 8px 30px rgba(83,52,131,0.5);
-  transition:all 0.3s;
-  font-family:'Nunito',sans-serif;
+  padding:14px 24px;border-radius:var(--r);
+  font-size:14px;font-weight:600;
+  cursor:pointer;border:none;text-decoration:none;
+  transition:transform .2s,box-shadow .2s,filter .2s;
+  font-family:'DM Sans',sans-serif;
+  white-space:nowrap;
 }}
-.oracle-btn:hover{{transform:translateY(-3px);box-shadow:0 14px 40px rgba(83,52,131,0.7);}}
-.oracle-output{{
-  margin-top:28px;
-  background:var(--card-bg);
-  border:1px solid var(--card-border);
-  border-radius:20px;
-  padding:28px 32px;
-  text-align:left;
-  display:none;
+.btn:hover{{transform:translateY(-2px);}}
+.btn-primary{{
+  background:var(--accent);color:#fff;
+  box-shadow:0 4px 16px rgba(200,96,42,.4);
 }}
-.oracle-output.visible{{display:block;animation:fade-in 0.6s ease;}}
-@keyframes fade-in{{from{{opacity:0;transform:translateY(10px);}}to{{opacity:1;transform:none;}}}}
-.oracle-answer{{
-  font-family:'Crimson Pro',serif;
-  font-size:18px;line-height:1.8;
-  color:var(--text);
+.btn-primary:hover{{box-shadow:0 8px 24px rgba(200,96,42,.5);}}
+.btn-secondary{{
+  background:rgba(255,255,255,.1);color:#fff;
+  border:1px solid rgba(255,255,255,.25);
 }}
-.oracle-char{{
-  display:inline;
-  opacity:0;
-  animation:char-appear 0.03s ease forwards;
-}}
+.btn-secondary:hover{{background:rgba(255,255,255,.18);}}
+.btn-price{{font-size:17px;font-weight:700;}}
+.btn-sub{{font-size:11px;opacity:.7;}}
+.btn-col{{display:flex;flex-direction:column;line-height:1.2;}}
 
-/* ───────────── ACTIVITY: RIDDLE ───────────── */
-.riddle-wrap{{
-  background:var(--card-bg);
-  border:1px solid var(--card-border);
-  border-radius:24px;
-  padding:40px;
-  margin-top:60px;
-  text-align:center;
-  position:relative;
-  overflow:hidden;
-}}
-.riddle-wrap::before{{
-  content:'🔢';
-  position:absolute;
-  font-size:200px;
-  opacity:0.03;
-  top:50%;left:50%;
-  transform:translate(-50%,-50%);
-  pointer-events:none;
-}}
-.riddle-title{{font-size:20px;font-weight:800;color:var(--gold);margin-bottom:8px;}}
-.riddle-q{{
-  font-family:'Crimson Pro',serif;
-  font-size:19px;color:var(--text);margin-bottom:24px;font-style:italic;
-}}
-.riddle-options{{
-  display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:20px;
-}}
-.riddle-opt{{
-  padding:12px 28px;
-  border:2px solid var(--card-border);
-  border-radius:50px;
-  background:transparent;
-  color:var(--text);
-  font-size:16px;font-weight:700;
-  cursor:pointer;
-  transition:all 0.2s;
-  font-family:'Nunito',sans-serif;
-}}
-.riddle-opt:hover{{border-color:var(--cyan);color:var(--cyan);}}
-.riddle-opt.correct{{border-color:var(--gold);background:rgba(255,215,0,0.15);color:var(--gold);}}
-.riddle-opt.wrong{{border-color:#ff4757;background:rgba(255,71,87,0.1);color:#ff4757;}}
-.riddle-result{{
-  font-size:16px;font-weight:700;
-  min-height:28px;
-  transition:all 0.3s;
-}}
-
-/* ───────────── PAYMENT MODAL ───────────── */
-.overlay{{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,0.85);
-  z-index:1000;
-  display:flex;align-items:center;justify-content:center;
-  opacity:0;pointer-events:none;
-  transition:opacity 0.3s;
-  backdrop-filter:blur(8px);
-}}
-.overlay.active{{opacity:1;pointer-events:all;}}
-.pay-modal{{
-  background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);
-  border:1px solid rgba(255,215,0,0.3);
-  border-radius:28px;
-  padding:40px;
-  width:min(480px,90vw);
-  position:relative;
-  box-shadow:0 30px 80px rgba(0,0,0,0.6);
+/* right — book card */
+.book-card{{
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:var(--r-lg);
+  padding:28px 24px;
   text-align:center;
 }}
-.pay-modal h2{{
-  font-family:'Cinzel Decorative',serif;
-  font-size:22px;color:var(--gold);margin-bottom:6px;
-}}
-.pay-modal .pay-type{{
-  font-size:13px;color:var(--muted);margin-bottom:28px;
-}}
-.qr-box{{
-  width:200px;height:200px;
-  background:#fff;
-  border-radius:16px;
+.book-cover{{
+  width:160px;height:220px;
   margin:0 auto 20px;
+  border-radius:4px 12px 12px 4px;
+  background:linear-gradient(160deg,#2D1B5E 0%,#3D2B6E 40%,#C8602A 100%);
+  box-shadow:
+    -4px 0 0 rgba(0,0,0,.3),
+    var(--shadow-lg);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+  transition:transform .3s,box-shadow .3s;
+  cursor:default;
+}}
+.book-cover:hover{{
+  transform:perspective(600px) rotateY(-8deg) translateY(-4px);
+  box-shadow:-6px 8px 32px rgba(0,0,0,.4),var(--shadow-lg);
+}}
+.book-cover::before{{
+  content:'';position:absolute;
+  left:0;top:0;bottom:0;width:16px;
+  background:linear-gradient(to right,rgba(0,0,0,.35),rgba(0,0,0,.05));
+}}
+.book-cover-inner{{padding:20px 16px;text-align:center;position:relative;z-index:1;}}
+.book-emoji{{font-size:36px;margin-bottom:8px;display:block;}}
+.book-cover-title{{
+  font-family:'Playfair Display',serif;
+  font-size:11px;font-weight:700;color:var(--gold2);
+  line-height:1.4;margin-bottom:6px;
+  letter-spacing:.02em;
+}}
+.book-cover-author{{font-size:9px;color:rgba(255,255,255,.5);letter-spacing:.08em;}}
+.book-card-label{{
+  font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,.35);margin-bottom:6px;
+}}
+.book-card-title{{font-size:14px;font-weight:600;color:#fff;margin-bottom:4px;}}
+.book-card-sub{{font-size:12px;color:rgba(255,255,255,.45);}}
+
+/* ─────────────────────────────────────────────────
+   PREVIEW
+───────────────────────────────────────────────── */
+.preview-grid{{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;
+  margin-top:40px;
+}}
+.preview-card{{
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:28px 24px;
+  transition:box-shadow .25s,transform .25s,border-color .25s;
+  cursor:default;
+  position:relative;overflow:hidden;
+}}
+.preview-card::after{{
+  content:'';
+  position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:linear-gradient(to right,var(--violet),var(--accent));
+  opacity:0;
+  transition:opacity .25s;
+}}
+.preview-card:hover{{
+  box-shadow:var(--shadow-lg);
+  transform:translateY(-4px);
+  border-color:transparent;
+}}
+.preview-card:hover::after{{opacity:1;}}
+.preview-emoji{{font-size:32px;margin-bottom:14px;display:block;}}
+.preview-ch{{font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:4px;}}
+.preview-title{{font-size:16px;font-weight:700;margin-bottom:12px;color:var(--ink);}}
+.preview-text{{
+  font-family:'DM Serif Display',serif;
+  font-size:15px;line-height:1.75;color:var(--ink2);font-style:italic;
+}}
+
+/* ─────────────────────────────────────────────────
+   AUTHOR
+───────────────────────────────────────────────── */
+.author-band{{background:var(--cream);}}
+.author-inner{{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:40px;align-items:center;
+}}
+.author-avatar{{
+  width:120px;height:120px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--violet) 0%,var(--accent) 100%);
   display:flex;align-items:center;justify-content:center;
-  padding:12px;
-  box-shadow:0 0 40px rgba(255,215,0,0.2);
+  font-size:52px;
+  flex-shrink:0;
+  box-shadow:var(--shadow-md);
 }}
-.qr-box svg{{width:100%;height:100%;}}
-.pay-amount{{
-  font-family:'Cinzel Decorative',serif;
-  font-size:36px;font-weight:700;color:#fff;margin-bottom:4px;
+.author-name{{font-size:26px;font-weight:900;margin-bottom:4px;}}
+.author-tag{{font-size:13px;color:var(--accent);font-weight:600;margin-bottom:14px;}}
+.author-bio{{font-size:15px;color:var(--ink2);line-height:1.75;max-width:560px;}}
+.author-stats{{display:flex;gap:32px;margin-top:20px;flex-wrap:wrap;}}
+.astat-num{{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--violet);line-height:1;}}
+.astat-lbl{{font-size:11px;color:var(--ink3);margin-top:2px;}}
+
+/* ─────────────────────────────────────────────────
+   RIDDLE
+───────────────────────────────────────────────── */
+.riddle-box{{
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:40px;
+  max-width:660px;margin:40px auto 0;
+  text-align:center;
+  box-shadow:var(--shadow);
 }}
-.pay-upi{{
-  font-size:13px;color:var(--cyan);margin-bottom:20px;
-  font-family:'Crimson Pro',serif;
+.riddle-counter{{
+  font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink3);margin-bottom:20px;
 }}
-.pay-methods{{
-  display:flex;gap:8px;justify-content:center;margin-bottom:24px;flex-wrap:wrap;
+.riddle-q{{
+  font-family:'Playfair Display',serif;
+  font-size:20px;color:var(--ink);
+  margin-bottom:28px;line-height:1.45;
 }}
-.pay-m{{
-  padding:8px 16px;
-  background:rgba(255,255,255,0.07);
-  border:1px solid var(--card-border);
-  border-radius:10px;
-  font-size:12px;font-weight:700;
-  color:var(--text);
+.riddle-opts{{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:20px;}}
+.riddle-opt{{
+  padding:11px 24px;
+  border:2px solid var(--border);
+  border-radius:50px;
+  background:#fff;color:var(--ink);
+  font-size:15px;font-weight:600;
+  cursor:pointer;
+  transition:all .2s;
+  font-family:'DM Sans',sans-serif;
 }}
-.pay-note{{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:20px;}}
-.pay-close{{
+.riddle-opt:hover:not(:disabled){{border-color:var(--violet);color:var(--violet);}}
+.riddle-opt.correct{{border-color:var(--green);background:#E8F5ED;color:var(--green);}}
+.riddle-opt.wrong{{border-color:#C0392B;background:#FDECEC;color:#C0392B;}}
+.riddle-opt:disabled{{cursor:default;}}
+.riddle-result{{
+  min-height:40px;font-size:14px;line-height:1.6;
+  color:var(--ink2);padding:0 8px;
+  transition:all .3s;
+}}
+.riddle-next{{
+  margin-top:16px;
+  padding:10px 22px;
+  border-radius:50px;
+  border:1px solid var(--border);
+  background:#fff;color:var(--ink2);
+  font-size:13px;font-weight:600;cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  transition:all .2s;
+}}
+.riddle-next:hover{{border-color:var(--violet);color:var(--violet);}}
+
+/* ─────────────────────────────────────────────────
+   ORDER MODAL
+───────────────────────────────────────────────── */
+.overlay{{
+  display:none;
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.55);
+  z-index:2000;
+  align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);
+}}
+.overlay.open{{display:flex;}}
+
+.modal{{
+  background:#fff;
+  border-radius:var(--r-lg);
+  width:min(520px,92vw);
+  max-height:90vh;overflow-y:auto;
+  box-shadow:0 24px 64px rgba(0,0,0,.25);
+  position:relative;
+  animation:modal-in .25s ease;
+}}
+@keyframes modal-in{{
+  from{{opacity:0;transform:translateY(16px);}}
+  to{{opacity:1;transform:none;}}
+}}
+.modal-close{{
   position:absolute;top:16px;right:20px;
   background:none;border:none;cursor:pointer;
-  color:rgba(255,255,255,0.4);
-  font-size:24px;line-height:1;
-  transition:color 0.2s;
+  font-size:22px;color:var(--ink3);
+  line-height:1;padding:4px;
+  transition:color .2s;
 }}
-.pay-close:hover{{color:#fff;}}
+.modal-close:hover{{color:var(--ink);}}
+
+.modal-header{{
+  padding:28px 32px 20px;
+  border-bottom:1px solid var(--border);
+}}
+.modal-title{{font-size:20px;font-weight:700;margin-bottom:4px;}}
+.modal-sub{{font-size:13px;color:var(--ink3);}}
+
+.modal-body{{padding:24px 32px;}}
+
+/* Step tabs */
+.steps{{display:flex;gap:0;margin-bottom:28px;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}}
+.step-tab{{
+  flex:1;padding:10px 4px;text-align:center;
+  font-size:12px;font-weight:600;color:var(--ink3);
+  background:#fff;position:relative;
+  transition:all .2s;
+}}
+.step-tab.active{{background:var(--violet);color:#fff;}}
+.step-tab .step-num{{
+  display:block;font-size:16px;font-weight:700;margin-bottom:2px;
+}}
+
+/* Forms */
+.form-field{{margin-bottom:16px;}}
+.form-label{{font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:6px;display:block;}}
+.form-input{{
+  width:100%;padding:11px 14px;
+  border:1.5px solid var(--border);border-radius:var(--r);
+  font-size:14px;font-family:'DM Sans',sans-serif;color:var(--ink);
+  transition:border-color .2s;outline:none;
+  background:#fff;
+}}
+.form-input:focus{{border-color:var(--violet);}}
+.form-row{{display:grid;grid-template-columns:1fr 1fr;gap:12px;}}
+
+/* QR section */
+.qr-section{{
+  background:var(--cream);
+  border-radius:var(--r);
+  padding:24px;text-align:center;
+  margin-bottom:20px;
+}}
+.qr-amount{{
+  font-family:'Playfair Display',serif;
+  font-size:32px;font-weight:700;color:var(--ink);margin-bottom:4px;
+}}
+.qr-upi{{font-size:13px;color:var(--ink3);margin-bottom:16px;}}
+.qr-img{{
+  width:160px;height:160px;
+  border:1px solid var(--border);border-radius:var(--r);
+  background:#fff;margin:0 auto 12px;
+  display:flex;align-items:center;justify-content:center;
+  padding:8px;
+}}
+.qr-img svg{{width:100%;height:100%;}}
+.pay-methods{{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}}
+.pay-chip{{
+  padding:6px 14px;background:#fff;
+  border:1px solid var(--border);border-radius:8px;
+  font-size:12px;font-weight:600;color:var(--ink2);
+}}
+.confirm-note{{
+  font-size:13px;color:var(--ink3);
+  line-height:1.65;margin-top:16px;
+  padding:12px 16px;
+  background:#F8F4FF;
+  border-left:3px solid var(--violet);
+  border-radius:0 var(--r) var(--r) 0;
+}}
+
+/* Screenshot upload */
+.upload-area{{
+  border:2px dashed var(--border);
+  border-radius:var(--r);
+  padding:28px;text-align:center;
+  cursor:pointer;
+  transition:border-color .2s,background .2s;
+  margin-bottom:16px;
+}}
+.upload-area:hover{{border-color:var(--violet);background:#F8F4FF;}}
+.upload-area input{{display:none;}}
+.upload-icon{{font-size:32px;margin-bottom:8px;}}
+.upload-label{{font-size:14px;font-weight:600;color:var(--ink2);}}
+.upload-sub{{font-size:12px;color:var(--ink3);margin-top:4px;}}
+
+.btn-full{{
+  width:100%;justify-content:center;padding:15px;font-size:15px;
+}}
 .btn-whatsapp{{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:14px 28px;
-  background:#25d366;
-  color:#fff;border:none;border-radius:12px;
-  font-size:14px;font-weight:800;
-  cursor:pointer;text-decoration:none;
-  transition:all 0.2s;
-  font-family:'Nunito',sans-serif;
+  display:flex;align-items:center;gap:8px;
+  padding:13px 20px;border-radius:var(--r);
+  background:#25D366;color:#fff;font-weight:600;font-size:14px;
+  text-decoration:none;font-family:'DM Sans',sans-serif;
+  transition:filter .2s;margin-bottom:12px;
+  justify-content:center;
 }}
-.btn-whatsapp:hover{{background:#20ba5a;transform:translateY(-2px);}}
+.btn-whatsapp:hover{{filter:brightness(.92);}}
 
-/* ───────────── PARTICLE BURST ───────────── */
-.particle{{
-  position:fixed;pointer-events:none;
-  border-radius:50%;z-index:9999;
-  animation:particle-fly 1s ease-out forwards;
+/* success */
+.success-box{{
+  text-align:center;padding:20px 0;display:none;
 }}
-@keyframes particle-fly{{
-  0%{{opacity:1;transform:scale(1);}}
-  100%{{opacity:0;transform:scale(0) translate(var(--tx),var(--ty));}}
-}}
+.success-icon{{font-size:56px;margin-bottom:16px;}}
+.success-title{{font-size:22px;font-weight:700;margin-bottom:8px;}}
+.success-sub{{font-size:14px;color:var(--ink3);line-height:1.65;}}
 
-/* ───────────── READING PROGRESS BAR ───────────── */
-#progress-bar{{
-  position:fixed;top:0;left:0;height:3px;
-  background:linear-gradient(90deg,var(--violet),var(--cyan),var(--gold));
-  z-index:9000;
-  width:0%;
-  transition:width 0.1s;
-  box-shadow:0 0 10px var(--cyan);
+/* ─────────────────────────────────────────────────
+   CTA STRIP
+───────────────────────────────────────────────── */
+.cta-strip{{
+  background:var(--ink);
+  padding:56px 0;
+  text-align:center;
+  color:#fff;
 }}
+.cta-strip h2{{color:#fff;font-size:clamp(24px,3vw,36px);margin-bottom:8px;}}
+.cta-strip p{{font-size:16px;color:rgba(255,255,255,.55);margin-bottom:32px;}}
 
-/* ───────────── RESPONSIVE ───────────── */
-@media(max-width:768px){{
-  .hero-inner{{flex-direction:column;gap:40px;text-align:center;}}
-  .hero-desc{{max-width:100%;}}
-  .hero-meta{{justify-content:center;}}
-  .buy-group{{justify-content:center;}}
-  .author-inner{{flex-direction:column;text-align:center;gap:32px;}}
+/* ─────────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────────── */
+@media(max-width:700px){{
+  .hero-inner{{grid-template-columns:1fr;}}
+  .book-card{{display:none;}}
+  .author-inner{{grid-template-columns:1fr;text-align:center;}}
+  .author-avatar{{margin:0 auto;}}
   .author-stats{{justify-content:center;}}
-  .book-wrap{{order:-1;}}
+  .form-row{{grid-template-columns:1fr;}}
+  .modal-body,.modal-header{{padding-left:20px;padding-right:20px;}}
+}}
+@media(max-width:500px){{
+  .btn{{padding:12px 18px;}}
+  .section{{padding:52px 0;}}
 }}
 </style>
 </head>
 <body>
 
-<!-- Cursor -->
-<div id="cursor"></div>
-<div id="cursor-trail"></div>
-
-<!-- Progress bar -->
-<div id="progress-bar"></div>
-
-<!-- Starfield -->
-<canvas id="starfield"></canvas>
-
-<!-- Payment Overlay -->
-<div class="overlay" id="payOverlay" onclick="closeIfOutside(event,'payOverlay')">
-  <div class="pay-modal">
-    <button class="pay-close" onclick="closePay()">×</button>
-    <h2 id="payTitle">Get Your Copy</h2>
-    <p class="pay-type" id="payTypeLabel"></p>
-    <div class="qr-box">
-      <!-- Placeholder QR — in production, replace with actual UPI QR image/generated QR -->
-      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-        <!-- Styled QR-like placeholder -->
-        <rect width="200" height="200" fill="white"/>
-        <rect x="10" y="10" width="60" height="60" fill="none" stroke="#000" stroke-width="4"/>
-        <rect x="20" y="20" width="40" height="40" fill="#000"/>
-        <rect x="130" y="10" width="60" height="60" fill="none" stroke="#000" stroke-width="4"/>
-        <rect x="140" y="20" width="40" height="40" fill="#000"/>
-        <rect x="10" y="130" width="60" height="60" fill="none" stroke="#000" stroke-width="4"/>
-        <rect x="20" y="140" width="40" height="40" fill="#000"/>
-        <!-- Center pattern -->
-        <rect x="80" y="10" width="8" height="8" fill="#000"/>
-        <rect x="96" y="10" width="8" height="8" fill="#000"/>
-        <rect x="112" y="10" width="8" height="8" fill="#000"/>
-        <rect x="80" y="26" width="8" height="8" fill="#000"/>
-        <rect x="112" y="26" width="8" height="8" fill="#000"/>
-        <rect x="88" y="42" width="8" height="8" fill="#000"/>
-        <rect x="104" y="42" width="8" height="8" fill="#000"/>
-        <!-- More pattern -->
-        <rect x="80" y="80" width="40" height="40" rx="4" fill="#533483"/>
-        <text x="100" y="107" font-family="Arial" font-size="22" fill="white" text-anchor="middle" font-weight="bold">📖</text>
-        <rect x="80" y="130" width="8" height="8" fill="#000"/>
-        <rect x="96" y="130" width="8" height="8" fill="#000"/>
-        <rect x="112" y="130" width="8" height="8" fill="#000"/>
-        <rect x="88" y="146" width="8" height="8" fill="#000"/>
-        <rect x="104" y="146" width="8" height="8" fill="#000"/>
-        <rect x="80" y="162" width="8" height="8" fill="#000"/>
-        <rect x="96" y="162" width="8" height="8" fill="#000"/>
-        <rect x="112" y="162" width="8" height="8" fill="#000"/>
-        <rect x="130" y="80" width="8" height="8" fill="#000"/>
-        <rect x="146" y="80" width="8" height="8" fill="#000"/>
-        <rect x="162" y="80" width="8" height="8" fill="#000"/>
-        <rect x="130" y="96" width="8" height="8" fill="#000"/>
-        <rect x="162" y="96" width="8" height="8" fill="#000"/>
-        <rect x="138" y="112" width="8" height="8" fill="#000"/>
-        <rect x="154" y="112" width="8" height="8" fill="#000"/>
-        <rect x="130" y="128" width="8" height="8" fill="#000"/>
-        <rect x="146" y="128" width="8" height="8" fill="#000"/>
-        <rect x="162" y="128" width="8" height="8" fill="#000"/>
-        <rect x="130" y="144" width="8" height="8" fill="#000"/>
-        <rect x="162" y="144" width="8" height="8" fill="#000"/>
-        <rect x="138" y="160" width="8" height="8" fill="#000"/>
-        <rect x="154" y="160" width="8" height="8" fill="#000"/>
-      </svg>
-    </div>
-    <div class="pay-amount" id="payAmount">{BOOK['currency']}299</div>
-    <div class="pay-upi">UPI: {BOOK['gpay_upi']}</div>
-    <div class="pay-methods">
-      <div class="pay-m">📱 GPay</div>
-      <div class="pay-m">💳 PhonePe</div>
-      <div class="pay-m">🔵 Paytm</div>
-      <div class="pay-m">💵 Cash</div>
-    </div>
-    <p class="pay-note">Scan the QR above with any UPI app · After payment, WhatsApp your screenshot to confirm your order!</p>
-    <a class="btn-whatsapp" href="https://wa.me/{BOOK['whatsapp']}?text=Hi! I just paid for the book 📖" target="_blank">
-      <span>📲</span> Confirm on WhatsApp
-    </a>
-  </div>
-</div>
-
-<!-- ══ HERO ══════════════════════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════════ -->
 <section class="hero">
-  <div class="hero-glow"></div>
-  <div class="hero-inner">
-    <!-- Book -->
-    <div class="book-wrap">
-      <div class="orbit-badge">
-        <span>✨ By<br>a Kid<br>13 yrs</span>
-      </div>
-      <div class="book">
-        <div class="book-cover">
-          <div class="book-spine-text">{BOOK['author']}</div>
-          <div class="book-stars">✨🌟⭐</div>
-          <!-- Decorative elements inside cover -->
-          <div style="position:absolute;top:30px;left:24px;right:24px;">
-            <div style="font-size:40px;text-align:center;margin-bottom:12px;">🔢✨🌌</div>
-            <div style="width:100%;height:1px;background:linear-gradient(to right,transparent,rgba(255,215,0,0.4),transparent);"></div>
-          </div>
-          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
-            <div style="font-size:52px;">🏰</div>
-          </div>
-          <div class="book-title-text">
-            {BOOK['title']}<br>
-            <div class="book-author-text">— {BOOK['author']} —</div>
-          </div>
+  <div class="container">
+    <div class="hero-inner">
+
+      <!-- LEFT -->
+      <div class="hero-left">
+        <div class="hero-eyebrow">
+          <span class="dot"></span> Now Available · Physical &amp; Digital
+        </div>
+        <h1>The Secret<br><em>Kingdom</em> of Numbers</h1>
+        <p class="hero-tagline">"{BOOK['tagline']}"</p>
+        <p class="hero-desc">{BOOK['description']}</p>
+        <div class="hero-meta">
+          <div class="meta-chip"><span class="ic">📚</span> {BOOK['pages']} pages</div>
+          <div class="meta-chip"><span class="ic">🎭</span> {BOOK['genre']}</div>
+          <div class="meta-chip"><span class="ic">🏷️</span> Ages 8–14</div>
+          <div class="meta-chip"><span class="ic">📍</span> {BOOK['city']}</div>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="openOrder('physical')">
+            <span>📦</span>
+            <span class="btn-col">
+              <span class="btn-price">₹{BOOK['physical_price']}</span>
+              <span class="btn-sub">Physical Copy</span>
+            </span>
+          </button>
+          <button class="btn btn-secondary" onclick="openOrder('digital')">
+            <span>⚡</span>
+            <span class="btn-col">
+              <span class="btn-price">₹{BOOK['digital_price']}</span>
+              <span class="btn-sub">Digital PDF</span>
+            </span>
+          </button>
         </div>
       </div>
-      <div class="book-shadow"></div>
-    </div>
 
-    <!-- Right -->
-    <div class="hero-right">
-      <div class="hero-badge"><span class="dot"></span> Now Available · Limited Print Run</div>
-      <h1 class="hero-h1">
-        {BOOK['title'].split()[0]} <span class="accent">{' '.join(BOOK['title'].split()[1:])}</span>
-      </h1>
-      <div class="hero-tagline">"{BOOK['tagline']}"</div>
-      <p class="hero-desc">{BOOK['description']}</p>
-      <div class="hero-meta">
-        <div class="meta-pill"><span>📚</span> {BOOK['pages']} Pages</div>
-        <div class="meta-pill"><span>🎭</span> {BOOK['genre']}</div>
-        <div class="meta-pill"><span>🏆</span> Age 8–14</div>
-        <div class="meta-pill"><span>📍</span> {BOOK['city']}</div>
+      <!-- RIGHT — book mockup -->
+      <div class="book-card">
+        <div class="book-cover">
+          <div class="book-cover-inner">
+            <span class="book-emoji">🏰✨</span>
+            <div class="book-cover-title">{BOOK['title']}</div>
+            <div class="book-cover-author">— {BOOK['author']} —</div>
+          </div>
+        </div>
+        <div class="book-card-label">Written by</div>
+        <div class="book-card-title">{BOOK['author']}</div>
+        <div class="book-card-sub">{BOOK['grade']} · {BOOK['age']} years · {BOOK['city']}</div>
       </div>
-      <div class="buy-group">
-        <button class="btn-buy btn-physical" onclick="openPay('physical')">
-          <span>📦</span>
-          <span>
-            <span class="price-tag">{BOOK['currency']}{BOOK['physical_price']}</span>
-            <span class="price-sub">Physical Book</span>
-          </span>
-        </button>
-        <button class="btn-buy btn-digital" onclick="openPay('digital')">
-          <span>📱</span>
-          <span>
-            <span class="price-tag">{BOOK['currency']}{BOOK['digital_price']}</span>
-            <span class="price-sub">Digital PDF</span>
-          </span>
-        </button>
-      </div>
+
     </div>
   </div>
 </section>
 
-<!-- ══ PREVIEW ══════════════════════════════════════════════════════ -->
-<div class="preview-bg">
-<div class="section">
-  <div class="section-label">👀 Sneak Peek</div>
-  <h2 class="section-title">Peek Inside the Magic</h2>
-  <div class="preview-cards">
-    {''.join(f"""
-    <div class="prev-card" onclick="burst(event)">
-      <span class="prev-emoji">{p['emoji']}</span>
-      <div class="prev-chapter">{p['title']}</div>
-      <p class="prev-text">{p['text']}</p>
-      <div class="card-glow"></div>
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════════
+     PREVIEW
+═══════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="label">👀 Sneak Peek</div>
+    <h2 style="font-size:clamp(26px,3.5vw,38px);">A glimpse inside the Kingdom</h2>
+    <div class="preview-grid">
+      {''.join(f"""
+      <div class="preview-card">
+        <span class="preview-emoji">{p['emoji']}</span>
+        <div class="preview-ch">{p['chapter']}</div>
+        <div class="preview-title">{p['title']}</div>
+        <p class="preview-text">{p['text']}</p>
+      </div>
+      """ for p in BOOK['preview'])}
     </div>
-    """ for p in BOOK['preview_pages'])}
   </div>
-</div>
+</section>
+
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════════
+     AUTHOR
+═══════════════════════════════════════════════ -->
+<div class="author-band">
+<section class="section-sm">
+  <div class="container">
+    <div class="author-inner">
+      <div class="author-avatar">🧒</div>
+      <div>
+        <div class="label">✍️ About the Author</div>
+        <div class="author-name">{BOOK['author']}</div>
+        <div class="author-tag">{BOOK['grade']} · {BOOK['age']} years old · {BOOK['city']}</div>
+        <p class="author-bio">{BOOK['author_bio']}</p>
+        <div class="author-stats">
+          <div class="astat">
+            <div class="astat-num">1st</div>
+            <div class="astat-lbl">Published Book</div>
+          </div>
+          <div class="astat">
+            <div class="astat-num">{BOOK['age']}</div>
+            <div class="astat-lbl">Years Young</div>
+          </div>
+          <div class="astat">
+            <div class="astat-num">{BOOK['pages']}</div>
+            <div class="astat-lbl">Pages Written</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 </div>
 
-<!-- ══ AUTHOR ══════════════════════════════════════════════════════ -->
-<div class="author-bg">
-<div class="author-inner">
-  <div class="author-avatar">🧒</div>
-  <div class="author-details">
-    <div class="section-label">✍️ The Author</div>
-    <div class="author-name">{BOOK['author']}</div>
-    <div class="author-grade">{BOOK['grade']} · {BOOK['age']} years old · {BOOK['city']}</div>
-    <p class="author-bio">
-      {BOOK['author']} is a Class 8 student with a wild imagination and a love for 
-      mathematics. When his math teacher told him that numbers have personalities, 
-      he went home and wrote an entire fantasy world about them. 
-      This book is proof that the best stories come from the most curious minds — 
-      no matter how young they are. 🌟
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════════
+     RIDDLE GAME
+═══════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container" style="text-align:center;">
+    <div class="label">🧩 Number Kingdom Challenge</div>
+    <h2 style="font-size:clamp(24px,3vw,36px);margin-bottom:8px;">Can you solve a riddle from the book?</h2>
+    <p style="color:var(--ink3);font-size:15px;max-width:480px;margin:0 auto;">
+      Every chapter hides a mathematical secret. Try yours below.
     </p>
-    <div class="author-stats">
-      <div class="astat"><div class="astat-num">1st</div><div class="astat-lbl">Published Book</div></div>
-      <div class="astat"><div class="astat-num">13</div><div class="astat-lbl">Years Young</div></div>
-      <div class="astat"><div class="astat-num">∞</div><div class="astat-lbl">Imagination</div></div>
+    <div class="riddle-box">
+      <div class="riddle-counter" id="riddleCounter"></div>
+      <div class="riddle-q" id="riddleQ"></div>
+      <div class="riddle-opts" id="riddleOpts"></div>
+      <div class="riddle-result" id="riddleResult"></div>
+      <button class="riddle-next" onclick="nextRiddle()">Next riddle →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     CTA STRIP
+═══════════════════════════════════════════════ -->
+<div class="cta-strip">
+  <div class="container">
+    <h2>Ready to enter the Kingdom?</h2>
+    <p>Every great mathematician started with a great story.</p>
+    <div class="btn-group" style="justify-content:center;">
+      <button class="btn btn-primary" onclick="openOrder('physical')" style="font-size:16px;padding:16px 28px;">
+        <span>📦</span>
+        <span class="btn-col">
+          <span class="btn-price">₹{BOOK['physical_price']}</span>
+          <span class="btn-sub">Physical Copy · Delivered</span>
+        </span>
+      </button>
+      <button class="btn" onclick="openOrder('digital')" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.25);font-size:16px;padding:16px 28px;">
+        <span>⚡</span>
+        <span class="btn-col">
+          <span class="btn-price">₹{BOOK['digital_price']}</span>
+          <span class="btn-sub">Digital PDF · Emailed</span>
+        </span>
+      </button>
     </div>
   </div>
 </div>
-</div>
 
-<!-- ══ ORACLE + RIDDLE ══════════════════════════════════════════════ -->
-<div class="oracle-bg">
-<div class="section">
-  <div class="oracle-wrap">
-    <div class="section-label" style="text-align:center;">🔮 Book Oracle</div>
-    <h2 class="section-title" style="text-align:center;">Ask the Book a Question</h2>
-    <p style="font-family:'Crimson Pro',serif;font-size:17px;color:var(--muted);margin-bottom:28px;">
-      The magic crystal knows everything inside the story. Ask it anything about math, 
-      the characters, or the kingdom…
-    </p>
-    <span class="oracle-crystal" id="crystalEmoji">🔮</span>
-    
-    <div style="display:flex;gap:10px;max-width:500px;margin:0 auto 16px;">
-      <input id="oracleInput" 
-        style="flex:1;padding:14px 20px;background:var(--card-bg);border:1px solid var(--card-border);
-               border-radius:12px;color:#fff;font-size:15px;font-family:'Nunito',sans-serif;
-               outline:none;transition:border-color 0.3s;" 
-        placeholder="What is Zero's superpower? …"
-        onkeydown="if(event.key==='Enter')askOracle()"
-        onfocus="this.style.borderColor='var(--cyan)'"
-        onblur="this.style.borderColor='var(--card-border)'"
-      />
-      <button class="oracle-btn" onclick="askOracle()" style="padding:14px 24px;">Ask ✨</button>
+
+<!-- ══════════════════════════════════════════════
+     ORDER MODAL
+═══════════════════════════════════════════════ -->
+<div class="overlay" id="overlay" onclick="overlayClick(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Order your copy</div>
+      <div class="modal-sub" id="modalSub"></div>
     </div>
-    
-    <div class="oracle-output" id="oracleOutput">
-      <div class="oracle-answer" id="oracleAnswer"></div>
+
+    <div class="modal-body">
+
+      <!-- STEP INDICATOR -->
+      <div class="steps">
+        <div class="step-tab active" id="tab1"><span class="step-num">1</span>Your Details</div>
+        <div class="step-tab" id="tab2"><span class="step-num">2</span>Pay</div>
+        <div class="step-tab" id="tab3"><span class="step-num">3</span>Confirm</div>
+      </div>
+
+      <!-- STEP 1: DETAILS -->
+      <div id="step1">
+        <div class="form-field">
+          <label class="form-label">Full Name *</label>
+          <input class="form-input" id="f_name" type="text" placeholder="e.g. Priya Mehta">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Email Address *</label>
+          <input class="form-input" id="f_email" type="email" placeholder="e.g. priya@gmail.com">
+          <div style="font-size:11px;color:var(--ink3);margin-top:4px;" id="emailNote"></div>
+        </div>
+        <div class="form-field">
+          <label class="form-label">WhatsApp / Phone *</label>
+          <input class="form-input" id="f_phone" type="tel" placeholder="e.g. 9876543210">
+        </div>
+        <div id="addressFields">
+          <div class="form-field">
+            <label class="form-label">Delivery Address *</label>
+            <input class="form-input" id="f_addr" type="text" placeholder="Flat / House No., Building, Street">
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label">City *</label>
+              <input class="form-input" id="f_city" type="text" placeholder="Pune">
+            </div>
+            <div class="form-field">
+              <label class="form-label">PIN Code *</label>
+              <input class="form-input" id="f_pin" type="text" placeholder="411001" maxlength="6">
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="goToStep2()">Continue to Payment →</button>
+      </div>
+
+      <!-- STEP 2: PAY -->
+      <div id="step2" style="display:none;">
+        <div class="qr-section">
+          <div class="qr-amount" id="payAmount"></div>
+          <div class="qr-upi">UPI ID: <strong>{BOOK['upi_id']}</strong></div>
+          <div class="qr-img">
+            <!-- Functional-looking QR placeholder — replace with real UPI QR image -->
+            <svg viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg">
+              <rect width="144" height="144" fill="white"/>
+              <!-- Top-left finder -->
+              <rect x="8" y="8" width="42" height="42" rx="4" fill="none" stroke="#111" stroke-width="4"/>
+              <rect x="16" y="16" width="26" height="26" rx="2" fill="#111"/>
+              <!-- Top-right finder -->
+              <rect x="94" y="8" width="42" height="42" rx="4" fill="none" stroke="#111" stroke-width="4"/>
+              <rect x="102" y="16" width="26" height="26" rx="2" fill="#111"/>
+              <!-- Bottom-left finder -->
+              <rect x="8" y="94" width="42" height="42" rx="4" fill="none" stroke="#111" stroke-width="4"/>
+              <rect x="16" y="102" width="26" height="26" rx="2" fill="#111"/>
+              <!-- Center logo -->
+              <rect x="56" y="56" width="32" height="32" rx="6" fill="#3D2B6E"/>
+              <text x="72" y="78" font-size="18" text-anchor="middle" fill="white">📖</text>
+              <!-- Data modules (decorative) -->
+              <rect x="58" y="8" width="6" height="6" fill="#111"/><rect x="68" y="8" width="6" height="6" fill="#111"/>
+              <rect x="78" y="8" width="6" height="6" fill="#111"/><rect x="58" y="18" width="6" height="6" fill="#111"/>
+              <rect x="78" y="18" width="6" height="6" fill="#111"/><rect x="68" y="28" width="6" height="6" fill="#111"/>
+              <rect x="58" y="38" width="6" height="6" fill="#111"/><rect x="68" y="38" width="6" height="6" fill="#111"/>
+              <rect x="78" y="38" width="6" height="6" fill="#111"/>
+              <rect x="8" y="58" width="6" height="6" fill="#111"/><rect x="18" y="68" width="6" height="6" fill="#111"/>
+              <rect x="28" y="58" width="6" height="6" fill="#111"/><rect x="38" y="68" width="6" height="6" fill="#111"/>
+              <rect x="8" y="78" width="6" height="6" fill="#111"/><rect x="28" y="78" width="6" height="6" fill="#111"/>
+              <rect x="8" y="88" width="6" height="6" fill="#111"/>
+              <rect x="98" y="58" width="6" height="6" fill="#111"/><rect x="108" y="68" width="6" height="6" fill="#111"/>
+              <rect x="128" y="58" width="6" height="6" fill="#111"/><rect x="98" y="78" width="6" height="6" fill="#111"/>
+              <rect x="118" y="78" width="6" height="6" fill="#111"/><rect x="128" y="88" width="6" height="6" fill="#111"/>
+              <rect x="58" y="98" width="6" height="6" fill="#111"/><rect x="78" y="98" width="6" height="6" fill="#111"/>
+              <rect x="68" y="108" width="6" height="6" fill="#111"/><rect x="58" y="118" width="6" height="6" fill="#111"/>
+              <rect x="78" y="118" width="6" height="6" fill="#111"/>
+            </svg>
+          </div>
+          <div class="pay-methods">
+            <span class="pay-chip">📱 GPay</span>
+            <span class="pay-chip">💳 PhonePe</span>
+            <span class="pay-chip">🔵 Paytm</span>
+            <span class="pay-chip">💵 Cash</span>
+          </div>
+        </div>
+        <div class="confirm-note" id="payNote"></div>
+        <div style="display:flex;gap:10px;margin-top:16px;">
+          <button class="btn" style="background:#fff;color:var(--ink);border:1px solid var(--border);flex:1;" onclick="goToStep(1)">← Back</button>
+          <button class="btn btn-primary" style="flex:2;" onclick="goToStep3()">I have paid →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: CONFIRM -->
+      <div id="step3" style="display:none;">
+        <p style="font-size:14px;color:var(--ink2);margin-bottom:16px;line-height:1.65;">
+          Please send your payment screenshot via WhatsApp to confirm your order.
+          Once confirmed, <span id="deliveryNote"></span>
+        </p>
+        <a class="btn-whatsapp" id="whatsappLink" href="#" target="_blank">
+          <span>📲</span> Send Screenshot on WhatsApp
+        </a>
+        <div class="upload-area" onclick="document.getElementById('screenshotInput').click()">
+          <input type="file" id="screenshotInput" accept="image/*" onchange="fileSelected(this)">
+          <div class="upload-icon">📸</div>
+          <div class="upload-label" id="uploadLabel">Upload Payment Screenshot</div>
+          <div class="upload-sub">JPG, PNG · Optional — WhatsApp is faster</div>
+        </div>
+        <div class="confirm-note">
+          📧 <strong id="digitalNote"></strong>
+        </div>
+        <button class="btn btn-primary btn-full" style="margin-top:16px;" onclick="submitOrder()">✓ Submit my Order</button>
+        <div style="display:flex;gap:10px;margin-top:10px;">
+          <button class="btn" style="background:#fff;color:var(--ink);border:1px solid var(--border);flex:1;" onclick="goToStep(2)">← Back</button>
+        </div>
+      </div>
+
+      <!-- SUCCESS -->
+      <div class="success-box" id="successBox">
+        <div class="success-icon">🎉</div>
+        <div class="success-title">Order Submitted!</div>
+        <p class="success-sub" id="successMsg"></p>
+      </div>
+
     </div>
   </div>
-
-  <!-- RIDDLE -->
-  <div class="riddle-wrap" id="riddleSection">
-    <div class="riddle-title">🧩 Number Kingdom Riddle</div>
-    <p class="riddle-q" id="riddleQ">Loading your riddle from the Kingdom…</p>
-    <div class="riddle-options" id="riddleOpts"></div>
-    <div class="riddle-result" id="riddleResult"></div>
-    <button onclick="nextRiddle()" 
-      style="margin-top:16px;padding:10px 24px;background:var(--card-bg);
-             border:1px solid var(--card-border);border-radius:50px;
-             color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;
-             font-family:'Nunito',sans-serif;transition:all 0.2s;"
-      onmouseover="this.style.borderColor='var(--cyan)'"
-      onmouseout="this.style.borderColor='var(--card-border)'"
-    >Next Riddle 🎲</button>
-  </div>
-</div>
 </div>
 
-<!-- ══ FINAL CTA ════════════════════════════════════════════════════ -->
-<div style="text-align:center;padding:80px 24px 100px;position:relative;z-index:2;">
-  <div style="font-size:48px;margin-bottom:20px;">📖✨</div>
-  <h2 style="font-family:'Cinzel Decorative',serif;font-size:clamp(22px,3vw,36px);color:#fff;margin-bottom:12px;">
-    Ready to Enter the Kingdom?
-  </h2>
-  <p style="font-family:'Crimson Pro',serif;font-size:18px;color:var(--muted);margin-bottom:36px;">
-    Every great mathematician started with a great story.
-  </p>
-  <div class="buy-group" style="justify-content:center;">
-    <button class="btn-buy btn-physical" onclick="openPay('physical')" style="font-size:17px;padding:18px 36px;">
-      <span>📦</span>
-      <span>
-        <span class="price-tag">{BOOK['currency']}{BOOK['physical_price']}</span>
-        <span class="price-sub">Physical Book · Free Delivery</span>
-      </span>
-    </button>
-    <button class="btn-buy btn-digital" onclick="openPay('digital')" style="font-size:17px;padding:18px 36px;">
-      <span>⚡</span>
-      <span>
-        <span class="price-tag">{BOOK['currency']}{BOOK['digital_price']}</span>
-        <span class="price-sub">Instant Digital PDF</span>
-      </span>
-    </button>
-  </div>
-</div>
-
+<!-- ══════════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════════ -->
 <script>
-// ─── CURSOR ───────────────────────────────────────────
-const cur = document.getElementById('cursor');
-const trail = document.getElementById('cursor-trail');
-let mx=0,my=0,tx=0,ty=0;
-document.addEventListener('mousemove',(e)=>{{
-  mx=e.clientX; my=e.clientY;
-  cur.style.left=(mx-7)+'px'; cur.style.top=(my-7)+'px';
-  setTimeout(()=>{{
-    trail.style.left=(mx-16)+'px'; trail.style.top=(my-16)+'px';
-  }},60);
-}});
+// ── RIDDLES ────────────────────────────────────────────────────────────────────
+const RIDDLES = {riddles_json};
+let ridIdx = 0;
 
-// ─── READING PROGRESS ─────────────────────────────────
-window.addEventListener('scroll',()=>{{
-  const total = document.body.scrollHeight - window.innerHeight;
-  const pct = (window.scrollY / total)*100;
-  document.getElementById('progress-bar').style.width = pct+'%';
-}});
-
-// ─── STARFIELD ────────────────────────────────────────
-const canvas = document.getElementById('starfield');
-const ctx = canvas.getContext('2d');
-let stars=[], W, H;
-function resize(){{ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }}
-resize(); window.addEventListener('resize',resize);
-for(let i=0;i<{BOOK['star_count']*3};i++){{
-  stars.push({{
-    x:Math.random()*2000, y:Math.random()*1200,
-    r:Math.random()*1.5+0.2,
-    o:Math.random(), sp:Math.random()*0.008+0.002,
-    dx:(Math.random()-0.5)*0.1
+function loadRiddle() {{
+  const r = RIDDLES[ridIdx];
+  document.getElementById('riddleCounter').textContent =
+    'Riddle ' + (ridIdx+1) + ' of ' + RIDDLES.length;
+  document.getElementById('riddleQ').textContent = r.q;
+  document.getElementById('riddleResult').innerHTML = '';
+  const opts = document.getElementById('riddleOpts');
+  opts.innerHTML = '';
+  r.opts.forEach((o, i) => {{
+    const b = document.createElement('button');
+    b.className = 'riddle-opt';
+    b.textContent = o;
+    b.onclick = () => checkRiddle(i);
+    opts.appendChild(b);
   }});
 }}
-function drawStars(){{
-  ctx.clearRect(0,0,W,H);
-  stars.forEach(s=>{{
-    s.o += s.sp; if(s.o>1||s.o<0) s.sp*=-1;
-    s.x += s.dx; if(s.x<0) s.x=W; if(s.x>W) s.x=0;
-    ctx.beginPath();
-    ctx.arc(s.x % W, s.y % H, s.r,0,Math.PI*2);
-    ctx.fillStyle=`rgba(255,255,255,${{s.o}})`;
-    ctx.fill();
+function checkRiddle(idx) {{
+  const r = RIDDLES[ridIdx];
+  document.querySelectorAll('.riddle-opt').forEach((b, i) => {{
+    if (i === r.correct) b.classList.add('correct');
+    else if (i === idx) b.classList.add('wrong');
+    b.disabled = true;
   }});
-  requestAnimationFrame(drawStars);
+  const res = document.getElementById('riddleResult');
+  res.innerHTML = (idx === r.correct)
+    ? '<strong style="color:var(--green)">🎉 Correct!</strong> ' + r.fact
+    : '<strong style="color:#C0392B">Not quite!</strong> ' + r.fact;
 }}
-drawStars();
-
-// ─── PARTICLE BURST ───────────────────────────────────
-function burst(e){{
-  const emojis=['✨','⭐','🌟','💫','🔢','📐','➕','✖️','🎉'];
-  for(let i=0;i<14;i++){{
-    const p=document.createElement('div');
-    p.className='particle';
-    const angle=Math.random()*360;
-    const dist=60+Math.random()*80;
-    const tx=Math.cos(angle*Math.PI/180)*dist+'px';
-    const ty=Math.sin(angle*Math.PI/180)*dist+'px';
-    p.style.cssText=`
-      left:${{e.clientX-10}}px;top:${{e.clientY-10}}px;
-      width:20px;height:20px;font-size:16px;
-      text-align:center;line-height:20px;
-      --tx:${{tx}};--ty:${{ty}};
-      background:none;
-      animation-delay:${{Math.random()*0.2}}s;
-    `;
-    p.textContent=emojis[Math.floor(Math.random()*emojis.length)];
-    document.body.appendChild(p);
-    setTimeout(()=>p.remove(),1200);
-  }}
-}}
-
-// ─── PAYMENT MODAL ────────────────────────────────────
-function openPay(type){{
-  const overlay=document.getElementById('payOverlay');
-  const title=document.getElementById('payTitle');
-  const label=document.getElementById('payTypeLabel');
-  const amount=document.getElementById('payAmount');
-  if(type==='physical'){{
-    title.textContent='📦 Physical Book Order';
-    label.textContent='Delivered to your doorstep in 3-5 days';
-    amount.textContent='{BOOK['currency']}{BOOK['physical_price']}';
-  }} else {{
-    title.textContent='⚡ Digital Book Order';
-    label.textContent='Instant PDF delivery via WhatsApp';
-    amount.textContent='{BOOK['currency']}{BOOK['digital_price']}';
-  }}
-  overlay.classList.add('active');
-}}
-function closePay(){{
-  document.getElementById('payOverlay').classList.remove('active');
-}}
-function closeIfOutside(e,id){{
-  if(e.target.id===id) document.getElementById(id).classList.remove('active');
-}}
-document.addEventListener('keydown',(e)=>{{ if(e.key==='Escape') closePay(); }});
-
-// ─── RIDDLES ──────────────────────────────────────────
-const riddles = [
-  {{
-    q:"I am a number that is neither positive nor negative. What am I?",
-    opts:["Zero","One","Infinity","-1"],correct:0,
-    explain:"Zero (0) is the only number that is neither positive nor negative!"
-  }},
-  {{
-    q:"I am a fraction. My numerator equals my denominator. What is my value?",
-    opts:["0","Infinity","1","1/2"],correct:2,
-    explain:"Any number divided by itself equals 1. That's the unity fraction!"
-  }},
-  {{
-    q:"Prime numbers can only be divided by 1 and themselves. Which of these is NOT prime?",
-    opts:["7","11","15","13"],correct:2,
-    explain:"15 = 3 × 5, so it's not prime. 7, 11, 13 are all prime!"
-  }},
-  {{
-    q:"What happens when you add all angles of any triangle?",
-    opts:["90°","360°","180°","270°"],correct:2,
-    explain:"Every triangle's angles always add up to exactly 180°. Magic!"
-  }},
-  {{
-    q:"I multiply any number and keep it the same. What number am I?",
-    opts:["0","2","1","-1"],correct:2,
-    explain:"1 is the Multiplicative Identity! n × 1 = n always."
-  }},
-];
-let currentRiddle=0;
-function loadRiddle(){{
-  const r=riddles[currentRiddle];
-  document.getElementById('riddleQ').textContent=r.q;
-  document.getElementById('riddleResult').textContent='';
-  document.getElementById('riddleResult').style.color='';
-  const opts=document.getElementById('riddleOpts');
-  opts.innerHTML='';
-  r.opts.forEach((o,i)=>{{
-    const btn=document.createElement('button');
-    btn.className='riddle-opt'; btn.textContent=o;
-    btn.onclick=()=>checkRiddle(i);
-    opts.appendChild(btn);
-  }});
-}}
-function checkRiddle(idx){{
-  const r=riddles[currentRiddle];
-  const btns=document.querySelectorAll('.riddle-opt');
-  btns.forEach((b,i)=>{{
-    if(i===r.correct) b.classList.add('correct');
-    else if(i===idx && idx!==r.correct) b.classList.add('wrong');
-    b.onclick=null;
-  }});
-  const res=document.getElementById('riddleResult');
-  if(idx===r.correct){{
-    res.textContent='🎉 Brilliant! '+r.explain;
-    res.style.color='var(--gold)';
-  }} else {{
-    res.textContent='💡 Not quite! '+r.explain;
-    res.style.color='var(--rose)';
-  }}
-}}
-function nextRiddle(){{
-  currentRiddle=(currentRiddle+1)%riddles.length;
+function nextRiddle() {{
+  ridIdx = (ridIdx + 1) % RIDDLES.length;
   loadRiddle();
 }}
 loadRiddle();
 
-// ─── BOOK ORACLE (Claude API) ─────────────────────────
-async function askOracle(){{
-  const input=document.getElementById('oracleInput');
-  const output=document.getElementById('oracleOutput');
-  const answer=document.getElementById('oracleAnswer');
-  const crystal=document.getElementById('crystalEmoji');
-  const q=input.value.trim();
-  if(!q) return;
-  
-  crystal.style.animation='none';
-  crystal.textContent='⏳';
-  output.classList.add('visible');
-  answer.innerHTML='<em style="color:var(--muted)">The crystal is thinking… ✨</em>';
-  
-  try{{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{{
-      method:'POST',
-      headers:{{'Content-Type':'application/json'}},
-      body:JSON.stringify({{
-        model:'claude-sonnet-4-20250514',
-        max_tokens:300,
-        system:`You are the Book Oracle for a children's fantasy book called "${{'{BOOK['title']}'}}" by ${{'{BOOK['author']}'}}, a 13-year-old Class 8 student from Pune. 
-The book is about a magical kingdom where numbers have superpowers — primes guard castles, fractions build bridges, zero discovers its true power, etc.
-Answer questions about the book, math concepts in it, or the author in a MAGICAL, CHILD-FRIENDLY way using simple language, wonder, and occasional emojis. 
-Keep answers to 2-3 sentences. If the question is unrelated to math or the book, gently redirect back to the kingdom.`,
-        messages:[{{role:'user',content:q}}]
-      }})
-    }});
-    const data=await resp.json();
-    const text=data.content?.[0]?.text || "The crystal clouds… try again!";
-    answer.innerHTML='';
-    let i=0;
-    function typeChar(){{
-      if(i<text.length){{
-        answer.innerHTML+=text[i];
-        i++; setTimeout(typeChar,18);
-      }}
-    }}
-    typeChar();
-    crystal.style.animation='crystal-spin 10s linear infinite';
-    crystal.textContent='🔮';
-  }} catch(err){{
-    answer.innerHTML='<em style="color:var(--rose)">The crystal needs a moment… please try again! ✨</em>';
-    crystal.style.animation='crystal-spin 10s linear infinite';
-    crystal.textContent='🔮';
+// ── ORDER MODAL ────────────────────────────────────────────────────────────────
+let orderType = 'physical';
+
+function openOrder(type) {{
+  orderType = type;
+  // reset to step 1
+  goToStep(1);
+  document.getElementById('step1').style.display = 'block';
+  document.getElementById('step2').style.display = 'none';
+  document.getElementById('step3').style.display = 'none';
+  document.getElementById('successBox').style.display = 'none';
+  document.querySelectorAll('.step-tab').forEach((t,i) => t.classList.toggle('active', i===0));
+
+  if (type === 'physical') {{
+    document.getElementById('modalTitle').textContent = '📦 Order Physical Copy';
+    document.getElementById('modalSub').textContent = 'Delivered to your doorstep · ₹{BOOK['physical_price']}';
+    document.getElementById('addressFields').style.display = 'block';
+    document.getElementById('emailNote').textContent = 'Order confirmation will be sent here.';
+  }} else {{
+    document.getElementById('modalTitle').textContent = '⚡ Order Digital PDF';
+    document.getElementById('modalSub').textContent = 'Emailed after payment confirmation · ₹{BOOK['digital_price']}';
+    document.getElementById('addressFields').style.display = 'none';
+    document.getElementById('emailNote').textContent = '📧 The PDF will be sent to this email after we confirm your payment.';
   }}
-  input.value='';
+
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}}
+
+function closeModal() {{
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}}
+function overlayClick(e) {{
+  if (e.target === document.getElementById('overlay')) closeModal();
+}}
+document.addEventListener('keydown', e => {{ if (e.key === 'Escape') closeModal(); }});
+
+function goToStep(n) {{
+  [1,2,3].forEach(i => {{
+    document.getElementById('step'+i).style.display = (i===n) ? 'block' : 'none';
+    document.getElementById('tab'+i).classList.toggle('active', i===n);
+  }});
+}}
+
+function goToStep2() {{
+  // basic validation
+  const name  = document.getElementById('f_name').value.trim();
+  const email = document.getElementById('f_email').value.trim();
+  const phone = document.getElementById('f_phone').value.trim();
+  if (!name || !email || !phone) {{
+    alert('Please fill in your name, email, and phone number.');
+    return;
+  }}
+  if (orderType === 'physical') {{
+    const addr = document.getElementById('f_addr').value.trim();
+    const city = document.getElementById('f_city').value.trim();
+    const pin  = document.getElementById('f_pin').value.trim();
+    if (!addr || !city || !pin) {{
+      alert('Please fill in your delivery address.');
+      return;
+    }}
+  }}
+
+  const price = orderType === 'physical' ? '₹{BOOK['physical_price']}' : '₹{BOOK['digital_price']}';
+  document.getElementById('payAmount').textContent = price;
+
+  const note = orderType === 'physical'
+    ? 'After we confirm your payment, your physical book will be dispatched within 1–2 working days.'
+    : 'After we confirm your payment screenshot, the PDF will be emailed to you within a few hours.';
+  document.getElementById('payNote').textContent = note;
+
+  goToStep(2);
+}}
+
+function goToStep3() {{
+  const name  = document.getElementById('f_name').value.trim();
+  const phone = document.getElementById('f_phone').value.trim();
+  const email = document.getElementById('f_email').value.trim();
+  const price = orderType === 'physical' ? '₹{BOOK['physical_price']}' : '₹{BOOK['digital_price']}';
+  const typeStr = orderType === 'physical' ? 'Physical Copy' : 'Digital PDF';
+
+  const msg = encodeURIComponent(
+    `Hi! I just paid *${{price}}* for *{BOOK['title']}* (${{typeStr}}).\\n\\nName: ${{name}}\\nPhone: ${{phone}}\\nEmail: ${{email}}\\n\\nScreenshot attached! Please confirm my order 🙏`
+  );
+  document.getElementById('whatsappLink').href =
+    'https://wa.me/{BOOK['whatsapp']}?text=' + msg;
+
+  if (orderType === 'digital') {{
+    document.getElementById('deliveryNote').textContent =
+      'the PDF will be emailed to ' + email + ' once payment is confirmed.';
+    document.getElementById('digitalNote').textContent =
+      'Digital book: we will email your PDF to ' + email + ' after confirming your payment.';
+  }} else {{
+    document.getElementById('deliveryNote').textContent =
+      'your book will be dispatched within 1–2 working days.';
+    document.getElementById('digitalNote').textContent =
+      'Your order confirmation will be sent to ' + email + '.';
+  }}
+
+  goToStep(3);
+}}
+
+function fileSelected(input) {{
+  if (input.files && input.files[0]) {{
+    document.getElementById('uploadLabel').textContent = '✅ ' + input.files[0].name;
+  }}
+}}
+
+function submitOrder() {{
+  // Hide all steps, show success
+  [1,2,3].forEach(i => document.getElementById('step'+i).style.display = 'none');
+  document.querySelectorAll('.step-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('successBox').style.display = 'block';
+
+  const name = document.getElementById('f_name').value.trim();
+  const email = document.getElementById('f_email').value.trim();
+  const msg = orderType === 'digital'
+    ? `Thank you, ${{name}}! 🎉 Once we confirm your payment, the PDF will be sent to ${{email}}. We'll WhatsApp you too!`
+    : `Thank you, ${{name}}! 🎉 Your book will be dispatched in 1–2 days. We'll WhatsApp you with the tracking update!`;
+  document.getElementById('successMsg').textContent = msg;
 }}
 </script>
 </body>
-</html>
-"""
+</html>"""
 
-components.html(html, height=10000, scrolling=False)
+components.html(html, height=6000, scrolling=False)
