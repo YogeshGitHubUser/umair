@@ -3,7 +3,7 @@ import time
 
 # ─── PAGE CONFIGURATION ────────────────────────────────────────────────
 st.set_page_config(
-    page_title="The Number Knight | Aryan's Math Adventure",
+    page_title="The Number Knight | Umair's Math Adventure",
     page_icon="🗡️",
     layout="centered",
     initial_sidebar_state="collapsed"
@@ -179,7 +179,7 @@ with author_container:
         st.write("*(Photo here)*")
     with col4:
         st.markdown("""
-        **Aryan, Class 8 Student & Math Explorer** Writing from his classroom in Pune, Aryan believes that math doesn't have to be boring equations on a whiteboard. By combining his love for fantasy novels and puzzle-solving, he wrote *The Number Knight* to show kids that math is basically real-world magic.
+        **Umair, Class 8 Student & Math Explorer** Writing from his classroom in Pune, Umair believes that math doesn't have to be boring equations on a whiteboard. By combining his love for fantasy novels and puzzle-solving, he wrote *The Number Knight* to show kids that math is basically real-world magic.
         """)
 
 st.markdown("<div class='separator'>✦ ✦ ✦</div>", unsafe_allow_html=True)
@@ -205,7 +205,7 @@ with tab1:
         
         # Replace with the actual UPI QR code image
         st.image("https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_monument_may_7_2013.jpg", width=150)
-        st.write("**UPI ID:** aryan@upi")
+        st.write("**UPI ID:** Umair@upi")
         
         p_txn_id = st.text_input("UPI Transaction ID *", placeholder="e.g., 312345678901")
         
@@ -230,7 +230,7 @@ with tab2:
         
         # Replace with the actual UPI QR code image
         st.image("https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_monument_may_7_2013.jpg", width=150)
-        st.write("**UPI ID:** aryan@upi")
+        st.write("**UPI ID:** Umair@upi")
         
         d_txn_id = st.text_input("UPI Transaction ID *", key="d_txn")
         
